@@ -21,17 +21,21 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: "No message provided." });
         }
 
-        const systemPrompt = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
-        The user is asking: "${userMessage}". 
-        Give a highly detailed, accurate strategy answer. Use relevant emojis and gaming humor.
+        // Define the system instructions using the correct SDK configuration property
+        const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
+        Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
         Do not use markdown bolding formatting (no asterisks).`;
 
+        // Corrected format using 'contents' and 'config' required by the @google/genai SDK
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            prompt: systemPrompt,
+            contents: [userMessage],
+            config: {
+                systemInstruction: systemInstruction
+            }
         });
 
-        // Safe extraction fallback for the new Google GenAI SDK
+        // Extract the text safely
         let botReply = "";
         if (response && response.text) {
             botReply = response.text;
