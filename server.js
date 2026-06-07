@@ -1,8 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -16,16 +13,13 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: "No message provided." });
         }
 
+        // Paste your actual API key between the quotes below:
+        const apiKey = 'YOUR_ACTUAL_AIza_KEY_HERE';
+
         const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
         Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
         Do not use markdown bolding formatting (no asterisks).`;
 
-        const apiKey = process.env.GOOGLE_API_KEY;
-        if (!apiKey) {
-            return res.status(500).json({ error: "API key missing on backend setup." });
-        }
-
-        // Direct HTTP fetch to Gemini API endpoint - bypasses SDK bugs completely
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
         const response = await fetch(geminiUrl, {
@@ -44,8 +38,6 @@ app.post('/api/chat', async (req, res) => {
         });
 
         const data = await response.json();
-
-        // Safely pull the text content from the direct JSON response
         const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Engine calibration mismatch.";
 
         res.json({ reply: botReply });
