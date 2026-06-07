@@ -1,17 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_API_KEY,
-});
 
 app.post('/api/chat', async (req, res) => {
     try {
@@ -21,34 +16,42 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: "No message provided." });
         }
 
-        // Define the system instructions using the correct SDK configuration property
         const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
         Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
         Do not use markdown bolding formatting (no asterisks).`;
 
-        // Corrected format using 'contents' and 'config' required by the @google/genai SDK
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: [userMessage],
-            config: {
-                systemInstruction: systemInstruction
-            }
+        const apiKey = process.env.GOOGLE_API_KEY;
+        if (!apiKey) {
+            return res.status(500).json({ error: "API key missing on backend setup." });
+        }
+
+        // Direct HTTP fetch to Gemini API endpoint - bypasses SDK bugs completely
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(geminiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: userMessage }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: systemInstruction }]
+                }
+            })
         });
 
-        // Extract the text safely
-        let botReply = "";
-        if (response && response.text) {
-            botReply = response.text;
-        } else if (response?.candidates?.[0]?.content?.parts?.[0]?.text) {
-            botReply = response.candidates[0].content.parts[0].text;
-        } else {
-            botReply = "Mainframe hiccup. Let's try that command again.";
-        }
+        const data = await response.json();
+
+        // Safely pull the text content from the direct JSON response
+        const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Engine calibration mismatch.";
 
         res.json({ reply: botReply });
 
     } catch (error) {
-        console.error('Backend Error', error);
+        console.error('Backend Error:', error);
         res.status(500).json({ error: 'Signal lost. Mainframe connection dropped.' });
     }
 });
