@@ -13,8 +13,11 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: "No message provided." });
         }
 
-        // PASTE YOUR WORKING GEMINI KEY DIRECTLY BETWEEN THESE QUOTES:
-        const apiKey = 'GEMINI_API_KEY';
+        // Updated variable name to target your Render Environment setup exactly
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            return res.status(500).json({ error: "API key missing on backend setup." });
+        }
 
         const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
         Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
@@ -39,7 +42,7 @@ app.post('/api/chat', async (req, res) => {
 
         const data = await response.json();
         
-        // This will print the message OR the raw JSON structure so it never hits a blind mismatch text
+        // Extract text safely or fall back to displaying the raw diagnostic JSON object
         const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(data);
 
         res.json({ reply: botReply });
