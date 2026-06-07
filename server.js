@@ -21,7 +21,8 @@ app.post('/api/chat', async (req, res) => {
 
         const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
         Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
-        Do not use markdown bolding formatting (no asterisks).`;
+        Do not use markdown bolding formatting (no asterisks). 
+        If you need to share a website link, write it out strictly as a clean clickable HTML link like this: <a href="URL" target="_blank">Link Text</a>.``;
 
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
