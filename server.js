@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import doteny from 'dotenv';
-import { GoogleGenAI } from 'google-genai';
+import { GoogleGenAI } from '@google/genai';
 
 doteny.config();
 
