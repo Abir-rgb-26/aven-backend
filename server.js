@@ -13,8 +13,10 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: "No message provided." });
         }
 
-        // Paste your actual API key between the quotes below:
-        const apiKey = 'YOUR_ACTUAL_AIza_KEY_HERE';
+        const apiKey = process.env.GOOGLE_API_KEY;
+        if (!apiKey) {
+            return res.status(500).json({ error: "API key missing on backend setup." });
+        }
 
         const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
         Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
@@ -38,7 +40,9 @@ app.post('/api/chat', async (req, res) => {
         });
 
         const data = await response.json();
-        const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Engine calibration mismatch.";
+        
+        // This line catches the text no matter how Google structures the object!
+        const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.text || "Calibration complete, but response formatting shifted.";
 
         res.json({ reply: botReply });
 
