@@ -37,7 +37,8 @@ If you need to share a website link, write it out strictly as a clean clickable 
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${openAiKey}`
+                    'Authorization': `Bearer ${openAiKey.trim()}`,
+                    'User-Agent': 'node-fetch'
                 },
                 body: JSON.stringify({
                     model: "gpt-4o-mini",
@@ -63,7 +64,6 @@ If you need to share a website link, write it out strictly as a clean clickable 
                 return res.status(500).json({ error: "Gemini API key missing on backend setup." });
             }
 
-            // Using the gemini-2.5-flash endpoint from your current setup
             const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
 
             let response;
@@ -101,7 +101,6 @@ If you need to share a website link, write it out strictly as a clean clickable 
         res.status(500).json({ error: 'Signal lost. Mainframe connection dropped.' });
     }
 });
-
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log(`AVEN AI Backend running on port ${PORT}`);
