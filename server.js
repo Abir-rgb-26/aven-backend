@@ -98,9 +98,11 @@ If you need to share a website link, write it out strictly as a clean clickable 
 
     } catch (error) {
         console.error('Backend Error:', error);
-        res.status(500).json({ error: 'Signal lost. Mainframe connection dropped.' });
+        // Returns the actual raw error message so we can diagnose it live on screen
+        res.status(500).json({ error: error.message || 'Signal lost. Mainframe connection dropped.' });
     }
 });
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log(`AVEN AI Backend running on port ${PORT}`);
