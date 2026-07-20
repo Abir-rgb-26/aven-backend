@@ -98,7 +98,6 @@ If you need to share a website link, write it out strictly as a clean clickable 
 
     } catch (error) {
         console.error('Backend Error:', error);
-        // Returns the actual raw error message so we can diagnose it live on screen
         res.status(500).json({ error: error.message || 'Signal lost. Mainframe connection dropped.' });
     }
 });
