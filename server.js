@@ -23,7 +23,7 @@ app.post('/api/chat', async (req, res) => {
         console.error('Backend Error:', error);
         res.status(500).json({ error: error.message || 'Signal lost. Mainframe connection dropped.' });
     }
-}
+});
         const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
 Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
 CRITICAL: Do not output any markdown formatting, asterisks (*), or hashtags (#). Use clean, plain text spacing for headers and lists.
