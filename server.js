@@ -64,6 +64,7 @@ If you need to share a website link, write it out strictly as a clean clickable 
                 return res.status(500).json({ error: "Gemini API key missing on backend setup." });
             }
 
+            const cleanGeminiKey = geminiKey.trim();
             const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
 
             let response;
@@ -89,6 +90,8 @@ If you need to share a website link, write it out strictly as a clean clickable 
 
                 break;
             }
+            if (!response || !response.ok){
+                throw new Error('Gemini API error (Status ${response?.status || 'Unknown'})');
 
             const geminiData = await response.json();
             botReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(geminiData);
