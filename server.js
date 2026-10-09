@@ -10,13 +10,20 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 app.post('/api/chat', async (req, res) => {
     try {
-        const userMessage = req.body.message;
-        const engine = req.body.engine || 'gemini'; // Default to gemini if engine is missing
-        
-        if (!userMessage) {
-            return res.status(400).json({ error: "No message provided." });
-        }
+        // ... all your userMessage, systemInstruction, OpenAI, and Gemini logic ...
 
+        // 1. End of Gemini / OpenAI response handling
+        const geminiData = await response.json();
+        botReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(geminiData);
+
+        // 2. Send the JSON response to frontend
+        res.json({ reply: botReply });
+
+    } catch (error) {   // <-- Line 102: catch MUST directly follow the closing '}' of try
+        console.error('Backend Error:', error);
+        res.status(500).json({ error: error.message || 'Signal lost. Mainframe connection dropped.' });
+    }
+}
         const systemInstruction = `You are AVEN AI, a witty, energetic, and slightly sarcastic gaming tactical assistant. 
 Give a highly detailed, accurate strategy answer based on the user's inquiry. Use relevant emojis and gaming humor.
 CRITICAL: Do not output any markdown formatting, asterisks (*), or hashtags (#). Use clean, plain text spacing for headers and lists.
