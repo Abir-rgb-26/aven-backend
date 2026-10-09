@@ -91,7 +91,7 @@ If you need to share a website link, write it out strictly as a clean clickable 
                 break;
             }
             if (!response || !response.ok){
-                throw new Error('Gemini API error (Status ${response?.status || 'Unknown'})');
+                throw new Error(`Gemini API error (Status ${response?.status || 'Unknown'})`);
 
             const geminiData = await response.json();
             botReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(geminiData);
